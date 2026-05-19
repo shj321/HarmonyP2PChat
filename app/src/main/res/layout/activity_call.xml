@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- 远端视频（全屏） -->
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/remoteView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- 本地视频（小窗） -->
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/localView"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- 状态文字 -->
+    <TextView
+        android:id="@+id/tvCallStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="呼叫中..."
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="80dp"/>
+
+    <!-- 操作按钮栏 -->
+    <LinearLayout
+        android:id="@+id/llControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="32dp">
+
+        <ImageButton
+            android:id="@+id/btnMute"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="12dp"
+            android:src="@android:drawable/ic_lock_silent_mode_off"
+            android:background="@drawable/circle_btn_gray"
+            android:contentDescription="静音"/>
+
+        <ImageButton
+            android:id="@+id/btnCamera"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="12dp"
+            android:src="@android:drawable/ic_menu_camera"
+            android:background="@drawable/circle_btn_gray"
+            android:contentDescription="摄像头"/>
+
+        <ImageButton
+            android:id="@+id/btnEndCall"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_margin="12dp"
+            android:src="@android:drawable/ic_delete"
+            android:background="@drawable/circle_btn_red"
+            android:contentDescription="挂断"/>
+
+        <ImageButton
+            android:id="@+id/btnSwitchCamera"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="12dp"
+            android:src="@android:drawable/ic_menu_rotate"
+            android:background="@drawable/circle_btn_gray"
+            android:contentDescription="切换摄像头"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
