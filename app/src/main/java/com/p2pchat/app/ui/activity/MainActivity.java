@@ -211,6 +211,22 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    private void updateModeStatus(String mode) {
+        // 根据当前连接模式更新UI状态
+        for (int i = 0; i < peers.size(); i++) {
+            PeerInfo p = peers.get(i);
+            // WebSocket 模式下所有已保存联系人标记为在线
+            if ("ws".equals(mode) || "auto".equals(mode)) {
+                if (PrefsUtil.isContactSaved(this, p.peerId)) {
+                    p.online = true;
+                    peerAdapter.notifyItemChanged(i);
+                }
+            }
+        }
+        Toast.makeText(this, "连接模式: " + mode, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
