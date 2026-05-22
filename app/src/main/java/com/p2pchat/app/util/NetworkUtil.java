@@ -34,4 +34,14 @@ public class NetworkUtil {
         } catch (Exception ignored) {}
         return "127.0.0.1";
     }
+
+    /** 是否已连接 Wi-Fi */
+    public static boolean isWifiConnected(Context ctx) {
+        android.net.ConnectivityManager cm = (android.net.ConnectivityManager)
+            ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        android.net.NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnected()
+            && netInfo.getType() == android.net.ConnectivityManager.TYPE_WIFI;
+    }
 }
