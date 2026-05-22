@@ -112,3 +112,4 @@ public class PrefsUtil {
     public static String getPreferredMode(Context ctx) {
         return getPrefs(ctx).getString(KEY_CONN_MODE, "auto");
     }
+}
