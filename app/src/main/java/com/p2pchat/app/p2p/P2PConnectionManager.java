@@ -102,7 +102,7 @@ public class P2PConnectionManager implements PeerConnectionObserverBase {
     }
 
     /** 处理接收到的信令消息 */
-    private void handleSignal(SignalMessage msg, String senderIp) {
+    void handleSignal(SignalMessage msg, String senderIp) {
         switch (msg.type) {
             case SignalMessage.TYPE_HELLO:
                 handleHello(msg, senderIp);
