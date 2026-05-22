@@ -59,9 +59,12 @@ public class P2PConnectionManager implements PeerConnectionObserverBase {
             PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
             PeerConnection.IceServer.builder("stun:stun1.l.google.com:19302").createIceServer(),
             // TURN (Open Relay 免费公共 TURN)
-            new PeerConnection.IceServer("turn:openrelay.metered.ca:80", "openrelayproject", "openrelayproject"),
-            new PeerConnection.IceServer("turn:openrelay.metered.ca:443", "openrelayproject", "openrelayproject"),
-            new PeerConnection.IceServer("turns:openrelay.metered.ca:443", "openrelayproject", "openrelayproject")
+            PeerConnection.IceServer.builder("turn:openrelay.metered.ca:80")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer(),
+            PeerConnection.IceServer.builder("turn:openrelay.metered.ca:443")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer(),
+            PeerConnection.IceServer.builder("turns:openrelay.metered.ca:443")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer()
         );
 
         initWebRTC();
