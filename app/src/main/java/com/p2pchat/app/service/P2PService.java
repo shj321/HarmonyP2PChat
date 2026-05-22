@@ -2,9 +2,7 @@ package com.p2pchat.app.service;
 
 import android.app.*;
 import android.content.*;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
+import android.os.*;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import com.google.gson.Gson;
@@ -102,10 +100,10 @@ public class P2PService extends Service {
                         msg.fromPeerId = fromId;
                         msg.toPeerId = PrefsUtil.getSelfId(P2PService.this);
                         msg.content = mp.text;
-                        msg.msgType = Message.TYPE_TEXT;
+                        msg.msgType = com.p2pchat.app.model.Message.TYPE_TEXT;
                         msg.sessionId = fromId.compareTo(msg.toPeerId) < 0 ?
                                 fromId + "_" + msg.toPeerId : msg.toPeerId + "_" + fromId;
-                        msg.state = Message.STATE_RECEIVED;
+                        msg.state = com.p2pchat.app.model.Message.STATE_RECEIVED;
                         db.messageDao().insert(msg);
                     }
                 } catch (Exception ignored) {}
@@ -207,9 +205,9 @@ public class P2PService extends Service {
         connectionManager.sendSignal(msg, toPeerId);
 
         // 本地持久化
-        Message m = Message.text(selfId, toPeerId, text, isGroup);
+        com.p2pchat.app.model.Message m = com.p2pchat.app.model.Message.text(selfId, toPeerId, text, isGroup);
         m.msgId = payload.msgId;
-        m.state = Message.STATE_SENT;
+        m.state = com.p2pchat.app.model.Message.STATE_SENT;
         db.messageDao().insert(m);
     }
 

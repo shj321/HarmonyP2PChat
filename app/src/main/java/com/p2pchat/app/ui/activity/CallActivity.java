@@ -1,9 +1,7 @@
 package com.p2pchat.app.ui.activity;
 
 import android.content.*;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
+import android.os.*;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
