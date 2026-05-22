@@ -3,16 +3,21 @@ package com.p2pchat.app.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.p2pchat.app.model.PeerInfo;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * 本地用户配置持久化工具
  */
 public class PrefsUtil {
 
-    private static final String PREF_NAME  = "p2pchat_prefs";
-    private static final String KEY_SELF   = "self_info";
-    private static final Gson   gson       = new Gson();
+    private static final String PREF_NAME      = "p2pchat_prefs";
+    private static final String KEY_SELF       = "self_info";
+    private static final String KEY_CONTACTS   = "saved_contacts";
+    private static final Gson   gson           = new Gson();
+    private static final Type   CONTACTS_TYPE  = new TypeToken<List<PeerInfo>>(){}.getType();
 
     public static SharedPreferences getPrefs(Context ctx) {
         return ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -35,5 +40,51 @@ public class PrefsUtil {
 
     public static boolean isSetup(Context ctx) {
         return getPrefs(ctx).getString(KEY_SELF, null) != null;
+    }
+
+    // ---- 联系人持久化 ----
+
+    public static List<PeerInfo> getSavedContacts(Context ctx) {
+        String json = getPrefs(ctx).getString(KEY_CONTACTS, null);
+        if (json == null) return new ArrayList<>();
+        try {
+            List<PeerInfo> list = gson.fromJson(json, CONTACTS_TYPE);
+            return list != null ? list : new ArrayList<>();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public static void saveContacts(Context ctx, List<PeerInfo> contacts) {
+        getPrefs(ctx).edit().putString(KEY_CONTACTS, gson.toJson(contacts)).apply();
+    }
+
+    public static void addContact(Context ctx, PeerInfo contact) {
+        List<PeerInfo> contacts = getSavedContacts(ctx);
+        // 去重：按 peerId 或 address+port
+        for (int i = 0; i < contacts.size(); i++) {
+            PeerInfo c = contacts.get(i);
+            if (c.peerId.equals(contact.peerId) ||
+                (c.address != null && c.address.equals(contact.address) && c.port == contact.port)) {
+                contacts.set(i, contact);
+                saveContacts(ctx, contacts);
+                return;
+            }
+        }
+        contacts.add(contact);
+        saveContacts(ctx, contacts);
+    }
+
+    public static void removeContact(Context ctx, String peerId) {
+        List<PeerInfo> contacts = getSavedContacts(ctx);
+        contacts.removeIf(c -> c.peerId.equals(peerId));
+        saveContacts(ctx, contacts);
+    }
+
+    public static boolean isContactSaved(Context ctx, String peerId) {
+        for (PeerInfo c : getSavedContacts(ctx)) {
+            if (c.peerId.equals(peerId)) return true;
+        }
+        return false;
     }
 }
