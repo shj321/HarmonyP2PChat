@@ -20,6 +20,8 @@ import com.p2pchat.app.model.PeerInfo;
 import com.p2pchat.app.service.P2PService;
 import com.p2pchat.app.ui.adapter.PeerListAdapter;
 import com.p2pchat.app.util.PrefsUtil;
+import android.view.Menu;
+import android.view.MenuItem;
 import java.util.*;
 
 /**
@@ -60,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (P2PService.ACTION_PEER_OFFLINE.equals(action)) {
                 String id = intent.getStringExtra(P2PService.EXTRA_PEER_ID);
                 markOffline(id);
+            } else if (P2PService.ACTION_MODE_CHANGED.equals(action)) {
+                String mode = intent.getStringExtra(P2PService.EXTRA_MODE);
+                updateModeStatus(mode);
             } else if (P2PService.ACTION_CALL_REQUEST.equals(action)) {
                 String fromId = intent.getStringExtra(P2PService.EXTRA_FROM_ID);
                 boolean isVideo = intent.getBooleanExtra(P2PService.EXTRA_CALL_IS_VIDEO, false);
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(P2PService.ACTION_PEER_DISCOVERED);
         filter.addAction(P2PService.ACTION_PEER_OFFLINE);
         filter.addAction(P2PService.ACTION_CALL_REQUEST);
+        filter.addAction(P2PService.ACTION_MODE_CHANGED);
         registerReceiver(receiver, filter);
     }
 
@@ -187,6 +193,21 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("isVideo", isVideo);
         i.putExtra("sdp", sdp);
         startActivity(i);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            startActivity(new Intent(this, ServerConfigActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
