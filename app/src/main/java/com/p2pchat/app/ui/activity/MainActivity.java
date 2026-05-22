@@ -20,6 +20,7 @@ import com.p2pchat.app.model.PeerInfo;
 import com.p2pchat.app.service.P2PService;
 import com.p2pchat.app.ui.adapter.PeerListAdapter;
 import com.p2pchat.app.util.PrefsUtil;
+import com.p2pchat.app.ui.activity.ServerConfigActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import java.util.*;
