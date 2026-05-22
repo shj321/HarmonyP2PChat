@@ -1,7 +1,9 @@
 package com.p2pchat.app.ui.activity;
 
 import android.content.*;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -179,7 +181,7 @@ public class CallActivity extends AppCompatActivity {
         P2PConnectionManager.CallReqPayload payload = new P2PConnectionManager.CallReqPayload();
         payload.isVideo = isVideo;
         payload.sdp = sdp;
-        SignalMessage msg = new SignalMessage(SignalMessage.TYPE_CALL_REQ, selfId, fromId, gson.toJson(payload));
+        Signalandroid.os.Message msg = new SignalMessage(SignalMessage.TYPE_CALL_REQ, selfId, fromId, gson.toJson(payload));
         p2pService.getConnectionManager().sendSignal(msg, fromId);
     }
 
@@ -188,7 +190,7 @@ public class CallActivity extends AppCompatActivity {
         P2PConnectionManager.CallAckPayload payload = new P2PConnectionManager.CallAckPayload();
         payload.accepted = accepted;
         payload.sdp = sdp;
-        SignalMessage msg = new SignalMessage(SignalMessage.TYPE_CALL_ACK, selfId, fromId, gson.toJson(payload));
+        Signalandroid.os.Message msg = new SignalMessage(SignalMessage.TYPE_CALL_ACK, selfId, fromId, gson.toJson(payload));
         p2pService.getConnectionManager().sendSignal(msg, fromId);
     }
 
@@ -198,7 +200,7 @@ public class CallActivity extends AppCompatActivity {
         cd.sdpMid = mid;
         cd.sdpMLineIndex = idx;
         cd.sdp = sdp;
-        SignalMessage msg = new SignalMessage(SignalMessage.TYPE_ICE, selfId, fromId, gson.toJson(cd));
+        Signalandroid.os.Message msg = new SignalMessage(SignalMessage.TYPE_ICE, selfId, fromId, gson.toJson(cd));
         p2pService.getConnectionManager().sendSignal(msg, fromId);
     }
 

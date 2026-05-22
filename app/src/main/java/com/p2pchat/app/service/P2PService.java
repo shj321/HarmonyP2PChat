@@ -2,7 +2,9 @@ package com.p2pchat.app.service;
 
 import android.app.*;
 import android.content.*;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import com.google.gson.Gson;
@@ -95,7 +97,7 @@ public class P2PService extends Service {
                 try {
                     ChatMsgPayload mp = gson.fromJson(payload, ChatMsgPayload.class);
                     if (mp != null && mp.msgId != null) {
-                        Message msg = new Message();
+                        android.os.Message msg = new android.os.Message();
                         msg.msgId = mp.msgId;
                         msg.fromPeerId = fromId;
                         msg.toPeerId = PrefsUtil.getSelfId(P2PService.this);
@@ -199,7 +201,7 @@ public class P2PService extends Service {
         payload.groupId = groupId;
 
         String selfId = PrefsUtil.getSelfId(this);
-        SignalMessage msg = new SignalMessage(
+        Signalandroid.os.Message msg = new SignalMessage(
             isGroup ? SignalMessage.TYPE_GROUP_MSG : SignalMessage.TYPE_CHAT,
             selfId, toPeerId, gson.toJson(payload));
         connectionManager.sendSignal(msg, toPeerId);

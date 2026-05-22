@@ -2,7 +2,9 @@ package com.p2pchat.app.ui.activity;
 
 import android.content.*;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.*;
@@ -57,7 +59,7 @@ public class ChatActivity extends AppCompatActivity {
             P2PService.ChatMsgPayload mp = gson.fromJson(payload, P2PService.ChatMsgPayload.class);
             if (mp == null) return;
 
-            Message m = new Message();
+            Message m = new android.os.Message();
             m.fromPeerId = from;
             m.content = mp.text;
             m.msgType = Message.TYPE_TEXT;
