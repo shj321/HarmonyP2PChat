@@ -95,7 +95,7 @@ public class P2PService extends Service {
                 try {
                     ChatMsgPayload mp = gson.fromJson(payload, ChatMsgPayload.class);
                     if (mp != null && mp.msgId != null) {
-                        android.os.Message msg = new android.os.Message();
+                        com.p2pchat.app.model.Message msg = new com.p2pchat.app.model.Message();
                         msg.msgId = mp.msgId;
                         msg.fromPeerId = fromId;
                         msg.toPeerId = PrefsUtil.getSelfId(P2PService.this);
@@ -199,7 +199,7 @@ public class P2PService extends Service {
         payload.groupId = groupId;
 
         String selfId = PrefsUtil.getSelfId(this);
-        Signalandroid.os.Message msg = new SignalMessage(
+        SignalMessage msg = new SignalMessage(
             isGroup ? SignalMessage.TYPE_GROUP_MSG : SignalMessage.TYPE_CHAT,
             selfId, toPeerId, gson.toJson(payload));
         connectionManager.sendSignal(msg, toPeerId);
