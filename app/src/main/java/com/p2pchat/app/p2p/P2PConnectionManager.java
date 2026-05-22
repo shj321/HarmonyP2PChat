@@ -55,8 +55,16 @@ public class P2PConnectionManager implements PeerConnectionObserverBase {
 
         // 使用公共 STUN（穿透内网，局域网内直连不需要）
         iceServers = Arrays.asList(
+            // STUN
             PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
-            PeerConnection.IceServer.builder("stun:stun1.l.google.com:19302").createIceServer()
+            PeerConnection.IceServer.builder("stun:stun1.l.google.com:19302").createIceServer(),
+            // TURN (Open Relay 免费公共 TURN)
+            PeerConnection.IceServer.builder("turn:openrelay.metered.ca:80")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer(),
+            PeerConnection.IceServer.builder("turn:openrelay.metered.ca:443")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer(),
+            PeerConnection.IceServer.builder("turns:openrelay.metered.ca:443")
+                .setUsername("openrelayproject").setPassword("openrelayproject").createIceServer()
         );
 
         initWebRTC();
