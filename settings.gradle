@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "HarmonyP2PChat"
+rootProject.name = 'HarmonyP2PChat'
 include ':app'
