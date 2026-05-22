@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,22 +36,14 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: Delete existing release tag (if exists)
-        continue-on-error: true
-        run: |
-          gh release delete latest --yes || true
-          git push origin :refs/tags/latest || true
+      - name: Publish APK to Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish APK to Release (latest)
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: "Latest Build"
-          body: "自动构建的最新 APK。提交: ${{ github.sha }}"
-          files: app/build/outputs/apk/debug/app-debug.apk
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          sleep 2
+          gh release create latest \
+            app/build/outputs/apk/debug/app-debug.apk \
+            --title "Latest Build" \
+            --notes "自动构建的最新 APK。提交: ${{ github.sha }}" \
+            --latest
