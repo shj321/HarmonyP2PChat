@@ -165,6 +165,54 @@ public class P2PService extends Service {
 
         // 启动后立即广播 HELLO
         helloHandler.post(helloRunnable);
+
+        // 重连已保存的联系人
+        reconnectSavedContacts();
+    }
+
+    /**
+     * 启动时自动向已保存的联系人发送 HELLO，尝试重新发现
+     */
+    private void reconnectSavedContacts() {
+        List<PeerInfo> saved = PrefsUtil.getSavedContacts(this);
+        for (PeerInfo contact : saved) {
+            if (contact.address != null && !contact.address.isEmpty()) {
+                connectionManager.connectToPeerByIp(contact.address, contact.port > 0 ? contact.port : SignalingServer.PORT);
+                Log.i(TAG, "重连联系人: " + contact.nickname + " (" + contact.address + ")");
+            }
+        }
+    }
+
+    /**
+     * 手动添加联系人：保存到本地 + 向目标 IP 发送 HELLO
+     */
+    public void addContact(String ip, int port, String nickname) {
+        PeerInfo contact = new PeerInfo();
+        contact.nickname = nickname;
+        contact.address = ip;
+        contact.port = port;
+        contact.online = false;
+
+        // 保存到持久化
+        PrefsUtil.addContact(this, contact);
+        Log.i(TAG, "已添加联系人: " + nickname + " (" + ip + ":" + port + ")");
+
+        // 向目标发送 HELLO
+        connectionManager.connectToPeerByIp(ip, port);
+    }
+
+    /**
+     * 删除联系人
+     */
+    public void removeContact(String peerId) {
+        PrefsUtil.removeContact(this, peerId);
+    }
+
+    /**
+     * 获取已保存的联系人列表
+     */
+    public List<PeerInfo> getSavedContacts() {
+        return PrefsUtil.getSavedContacts(this);
     }
 
     @Override
