@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="复制 Peer ID"
-            style="?attr/buttonStyleOutlined"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_marginBottom="24dp"/>
 
         <View
@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:text="测试连接"
             android:layout_marginTop="16dp"
-            style="?attr/buttonStyleOutlined"/>
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
