@@ -28,7 +28,7 @@ public class GroupChatActivity extends AppCompatActivity {
     private RecyclerView rvMessages;
     private EditText etInput;
     private MessageAdapter msgAdapter;
-    private List<Message> messages = new ArrayList<>();
+    private List<com.p2pchat.app.model.Message> messages = new ArrayList<>();
 
     private P2PService p2pService;
     private boolean bound = false;
