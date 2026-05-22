@@ -57,7 +57,7 @@ public class ChatActivity extends AppCompatActivity {
             P2PService.ChatMsgPayload mp = gson.fromJson(payload, P2PService.ChatMsgPayload.class);
             if (mp == null) return;
 
-            Message m = new android.os.Message();
+            Message m = new Message();
             m.fromPeerId = from;
             m.content = mp.text;
             m.msgType = Message.TYPE_TEXT;
