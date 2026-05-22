@@ -12,6 +12,7 @@ import com.p2pchat.app.db.ChatDatabase;
 import com.p2pchat.app.model.*;
 import com.p2pchat.app.p2p.*;
 import com.p2pchat.app.util.PrefsUtil;
+import com.p2pchat.app.util.NetworkUtil;
 import java.util.*;
 
 /**
@@ -31,6 +32,8 @@ public class P2PService extends Service {
     public  static final String ACTION_FILE_META       = "com.p2pchat.FILE_META";
     public  static final String ACTION_FILE_ACK        = "com.p2pchat.FILE_ACK";
     public  static final String ACTION_GROUP_MSG       = "com.p2pchat.GROUP_MSG";
+    public  static final String ACTION_MODE_CHANGED     = "com.p2pchat.MODE_CHANGED";
+    public  static final String EXTRA_MODE             = "connectionMode";
 
     public  static final String EXTRA_PEER_ID          = "peerId";
     public  static final String EXTRA_PAYLOAD          = "payload";
@@ -163,15 +166,97 @@ public class P2PService extends Service {
         fileTransferManager = new FileTransferManager(this, signalingServer);
         fileTransferManager.startServer();
 
-        // 启动后立即广播 HELLO
-        helloHandler.post(helloRunnable);
-
-        // 重连已保存的联系人
-        reconnectSavedContacts();
+        // 根据配置选择信令模式
+        String mode = PrefsUtil.getPreferredMode(this);
+        if ("ws".equals(mode)) {
+            switchToWebSocket();
+        } else if ("lan".equals(mode)) {
+            startUdpMode();
+        } else {
+            // 自动检测
+            autoDetectMode();
+        }
     }
 
     /**
-     * 启动时自动向已保存的联系人发送 HELLO，尝试重新发现
+     * 自动检测模式：WiFi 下先尝试 UDP，非 WiFi 直接 WebSocket
+     */
+    private void autoDetectMode() {
+        if (NetworkUtil.isWifiConnected(this)) {
+            startUdpMode();
+            // 5秒后如果没发现任何人，切 WebSocket
+            helloHandler.postDelayed(() -> {
+                if (connectionManager.getPeerMap().isEmpty()) {
+                    Log.i(TAG, "局域网未发现节点，切换 WebSocket");
+                    switchToWebSocket();
+                } else {
+                    reconnectSavedContacts();
+                }
+            }, 5000);
+        } else {
+            switchToWebSocket();
+        }
+    }
+
+    /** 启动 UDP 模式 */
+    private void startUdpMode() {
+        helloHandler.post(helloRunnable);
+        reconnectSavedContacts();
+        broadcastMode("LAN");
+    }
+
+    /** 切换到 WebSocket 模式 */
+    private void switchToWebSocket() {
+        helloHandler.removeCallbacks(helloRunnable);
+        String serverUrl = PrefsUtil.getServerUrl(this);
+        if (serverUrl == null || serverUrl.isEmpty()) {
+            broadcastMode("NO_SERVER");
+            return;
+        }
+        WebSocketSignalClient wsClient = new WebSocketSignalClient(this);
+        wsClient.setListener(new WebSocketSignalClient.WsListener() {
+            @Override public void onConnected() {
+                Log.i(TAG, "WebSocket 信令已连接");
+                broadcastMode("WS");
+            }
+            @Override public void onDisconnected(int code, String reason) {
+                Log.w(TAG, "WebSocket 断开: " + code);
+                broadcastMode("RECONNECTING");
+            }
+            @Override public void onSignalReceived(com.p2pchat.app.model.SignalMessage msg) {
+                connectionManager.handleSignal(msg, msg.fromId);
+            }
+            @Override public void onPeerListReceived(List<PeerInfo> peers) {
+                for (PeerInfo p : peers) {
+                    PeerInfo existing = connectionManager.getPeer(p.peerId);
+                    if (existing == null) {
+                        p.address = p.peerId; // WS模式: address存peerId作为路由标识
+                        connectionManager.addKnownPeer(p);
+                    }
+                }
+            }
+            @Override public void onStateChange(WebSocketSignalClient.State newState) {
+                if (newState == WebSocketSignalClient.State.CONNECTED) {
+                    broadcastMode("WS");
+                } else if (newState == WebSocketSignalClient.State.RECONNECTING) {
+                    broadcastMode("RECONNECTING");
+                }
+            }
+        });
+        wsClient.connect(serverUrl);
+        // 存储引用以供后续使用
+        signalingServer.setWsClient(wsClient);
+        broadcastMode("CONNECTING");
+    }
+
+    private void broadcastMode(String mode) {
+        Intent i = new Intent(ACTION_MODE_CHANGED);
+        i.putExtra(EXTRA_MODE, mode);
+        sendBroadcast(i);
+    }
+
+    /**
+     * 重连已保存的联系人（UDP模式）
      */
     private void reconnectSavedContacts() {
         List<PeerInfo> saved = PrefsUtil.getSavedContacts(this);
