@@ -59,6 +59,6 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
-    // WebRTC for Android
-    implementation 'io.github.webrtc-sdk:android:104.5112.01'
+    // WebRTC - use Stream's build which is on Maven Central
+    implementation 'io.getstream:stream-webrtc-android:1.1.1'
 }
