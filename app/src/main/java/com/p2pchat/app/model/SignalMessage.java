@@ -23,6 +23,10 @@ public class SignalMessage {
     public static final String TYPE_PING        = "PING";
     public static final String TYPE_PONG        = "PONG";
 
+    // 服务器控制消息类型
+    public static final String TYPE_REGISTER    = "REGISTER";
+    public static final String TYPE_TURN_CREDENTIALS = "TURN_CREDENTIALS";
+
     public String type;
     public String fromId;
     public String toId;
