@@ -1,7 +1,9 @@
 package com.p2pchat.app.ui.activity;
 
 import android.content.*;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,11 +57,11 @@ public class GroupChatActivity extends AppCompatActivity {
                 gson.fromJson(payload, P2PConnectionManager.GroupMsgPayload.class);
             if (gmp == null) return;
 
-            Message m = new Message();
+            com.p2pchat.app.model.Message m = new com.p2pchat.app.model.Message();
             m.fromPeerId = from;
             m.content = gmp.content;
-            m.msgType = Message.TYPE_TEXT;
-            m.state = Message.STATE_RECEIVED;
+            m.msgType = com.p2pchat.app.model.Message.TYPE_TEXT;
+            m.state = com.p2pchat.app.model.Message.STATE_RECEIVED;
             m.isGroupMsg = true;
             messages.add(m);
             msgAdapter.notifyItemInserted(messages.size() - 1);
@@ -138,7 +140,7 @@ public class GroupChatActivity extends AppCompatActivity {
             } catch (Exception ignored) {}
         }
 
-        Message m = Message.text(selfId, groupId, text, true);
+        com.p2pchat.app.model.Message m = com.p2pchat.app.model.Message.text(selfId, groupId, text, true);
         messages.add(m);
         msgAdapter.notifyItemInserted(messages.size() - 1);
         rvMessages.scrollToPosition(messages.size() - 1);
