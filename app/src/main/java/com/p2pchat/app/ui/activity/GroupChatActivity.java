@@ -116,7 +116,7 @@ public class GroupChatActivity extends AppCompatActivity {
         group.memberIds = gson.toJson(new ArrayList<>(Arrays.asList(selfId)));
         db.groupDao().insert(group);
         groupId = group.groupId;
-        Toast.makeText(this, "群组 "" + groupName + "" 已创建，分享 ID: " + groupId, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "群组 “" + groupName + "” 已创建，分享 ID: " + groupId, Toast.LENGTH_LONG).show();
     }
 
     private void sendGroupText() {
