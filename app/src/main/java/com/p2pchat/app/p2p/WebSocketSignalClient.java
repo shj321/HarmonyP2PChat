@@ -10,7 +10,6 @@ import com.p2pchat.app.model.PeerInfo;
 import com.p2pchat.app.model.SignalMessage;
 import com.p2pchat.app.util.PrefsUtil;
 import okhttp3.*;
-import okio.ByteString;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
