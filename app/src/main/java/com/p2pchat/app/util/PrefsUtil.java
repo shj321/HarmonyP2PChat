@@ -87,4 +87,28 @@ public class PrefsUtil {
         }
         return false;
     }
-}
+
+    // ---- 服务器配置 ----
+
+    private static final String KEY_SERVER_URL = "server_url";
+    private static final String KEY_CONN_MODE   = "preferred_mode";
+
+    /** 保存信令服务器地址 */
+    public static void saveServerUrl(Context ctx, String url) {
+        getPrefs(ctx).edit().putString(KEY_SERVER_URL, url).apply();
+    }
+
+    /** 读取信令服务器地址 */
+    public static String getServerUrl(Context ctx) {
+        return getPrefs(ctx).getString(KEY_SERVER_URL, "");
+    }
+
+    /** 保存首选连接模式 */
+    public static void savePreferredMode(Context ctx, String mode) {
+        getPrefs(ctx).edit().putString(KEY_CONN_MODE, mode).apply();
+    }
+
+    /** 读取首选连接模式 ("auto"/"lan"/"ws") */
+    public static String getPreferredMode(Context ctx) {
+        return getPrefs(ctx).getString(KEY_CONN_MODE, "auto");
+    }
