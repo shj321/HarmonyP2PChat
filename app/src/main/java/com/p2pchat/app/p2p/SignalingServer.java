@@ -32,6 +32,23 @@ public class SignalingServer {
     private final Context context;
     private SignalListener listener;
 
+    private WebSocketSignalClient wsClient;
+
+    public void setWsClient(WebSocketSignalClient client) { this.wsClient = client; }
+
+    /** 向指定目标发送（双模式路由） */
+    public void sendToTarget(SignalMessage msg, String targetIdentifier) {
+        if (wsClient != null && wsClient.getState() == WebSocketSignalClient.State.CONNECTED) {
+            msg.toId = targetIdentifier;
+            wsClient.sendToPeer(msg);
+        } else {
+            sendUnicast(msg, targetIdentifier, SignalingServer.PORT);
+        }
+    }
+
+    public WebSocketSignalClient getWsClient() { return wsClient; }
+
+
     public interface SignalListener {
         void onSignalReceived(SignalMessage msg, String senderIp);
     }
