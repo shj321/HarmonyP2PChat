@@ -262,6 +262,36 @@ public class P2PConnectionManager implements PeerConnectionObserverBase {
         createPeerConnection(remotePeerId, true, remote);
     }
 
+    /**
+     * 通过 IP 地址主动发送 HELLO 并连接（手动添加联系人时使用）
+     * 向指定 IP:端口 发送 HELLO 信令，对方收到后自动回复 HELLO_ACK
+     */
+    public void connectToPeerByIp(String ip, int port) {
+        PeerInfo self = PrefsUtil.getSelfInfo(context);
+        SignalMessage hello = new SignalMessage(
+            SignalMessage.TYPE_HELLO,
+            self.peerId,
+            "*",
+            gson.toJson(self)
+        );
+        // 向目标 IP 发送单播 HELLO（而非广播）
+        signalingServer.sendUnicast(hello, ip, port);
+        Log.i(TAG, "已向 " + ip + ":" + port + " 发送定向 HELLO");
+    }
+
+    /**
+     * 手动添加一个已知 PeerInfo（不依赖发现）
+     * 通常在收到对方的 HELLO_ACK 后由 P2PService 调用
+     */
+    public void addKnownPeer(PeerInfo peer) {
+        if (!peerMap.containsKey(peer.peerId)) {
+            peerMap.put(peer.peerId, peer);
+            mainHandler.post(() -> {
+                if (eventListener != null) eventListener.onPeerDiscovered(peer);
+            });
+        }
+    }
+
     private void createPeerConnection(String remotePeerId, boolean createOffer, PeerInfo remote) {
         PeerConnection.RTCConfiguration config = new PeerConnection.RTCConfiguration(iceServers);
         config.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
